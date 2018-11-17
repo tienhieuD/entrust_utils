@@ -11,7 +11,7 @@ UNIT_NAME = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ', 't�
 NUMBER_TO_STRING = {'0': 'không', '1': 'một', '2': 'hai', '3': 'ba', '4': 'bốn', '5': 'năm', '6': 'sáu', '7': 'bảy', '8': 'tám', '9': 'chín'}
 REPLACE_WORD = {'không mươi': 'linh', 'linh không': '', 'mươi không': 'mươi', 'một mươi': 'mười', 'mươi bốn': 'mươi tư', 'mười năm': 'mười lăm', 'mươi một': 'mươi mốt', 'mươi năm': 'mươi lăm', }
 REPLACE_WORD_2 = dict([(trim_recursion(SPACE_CHAR.join((NUMBER_TO_STRING['0'], HUNDRED_UNIT[2], unit_name, CURRENCY))), CURRENCY) for unit_name in UNIT_NAME])
-
+REPLACE_WORD_3 = {'không trăm linh đồng': 'đồng', 'không trăm linh không đồng': 'đồng'}
 
 def number2text_vn(n):
     """ Convert number to Vietnam currency """
@@ -49,5 +49,16 @@ def number2text_vn(n):
         result = trim_recursion(result.replace(wrong_word, right_word))
     for wrong_word, right_word in REPLACE_WORD_2.items():
         result = trim_recursion(result.replace(trim_recursion(wrong_word), right_word))
+    for wrong_word, right_word in REPLACE_WORD_3.items():
+        result = trim_recursion(result.replace(trim_recursion(wrong_word), right_word))
 
     return result.strip()
+
+
+if __name__ == '__main__':
+    assert number2text_vn(7000000) == 'bảy triệu đồng'
+    assert number2text_vn(7000001) == 'bảy triệu không trăm nghìn không trăm linh một đồng'
+    assert number2text_vn(7600000) == 'bảy triệu sáu trăm nghìn đồng'
+    assert number2text_vn(7650000) == 'bảy triệu sáu trăm năm mươi nghìn đồng'
+    assert number2text_vn(7650203) == 'bảy triệu sáu trăm năm mươi nghìn hai trăm linh ba đồng'
+    pass
